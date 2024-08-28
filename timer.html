@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타이머</title>
+</head>
+<body>
+    <header>
+        <img src="weniv-logo.svg" alt="weniv-logo" class="weniv-logo">
+    </header>
+    <main>
+        <h1>TIMER</h1>
+        <section class="inputs">
+            <div class="input-group">
+                <label for="hours">HRS</label>
+                <input id="hours" value="0" pattern="\d+">
+            </div>
+            <span class="separator">:</span>
+            <div class="input-group">
+                <label for="minutes">MIN</label>
+                <input id="minutes" value="0" pattern="\d+">
+            </div>
+            <span class="separator">:</span>
+            <div class="input-group">
+                <label for="seconds">SEC</label>
+                <input id="seconds" value="0" pattern="\d+">
+            </div>
+        </section>
+        <section class="controls">
+            <button type="button" class="start">START</button>
+            <button type="button" class="reset">RESET</button>
+        </section>
+    </main>
+    <footer>
+        <small>WENIV CORP.</small>
+    </footer>
+    <script>
+    const startButton = document.querySelector('.start');
+    const resetButton = document.querySelector('.reset');
+    const hoursInput = document.getElementById('hours');
+    const minutesInput = document.getElementById('minutes');
+    const secondsInput = document.getElementById('seconds');
+
+    let timerInterval = null;
+
+    function updateButtonToPause() {
+        startButton.textContent = 'PAUSE';
+        startButton.className = 'pause';
+    }
+
+    function updateButtonToStart() {
+        startButton.textContent = 'START';
+        startButton.className = 'start';
+    }
+
+    function isTimeZero() {
+        return hoursInput.value == 0 && minutesInput.value == 0 && secondsInput.value == 0;
+    }
+
+    function decrementTime() {
+        let hours = parseInt(hoursInput.value, 10);
+        let minutes = parseInt(minutesInput.value, 10);
+        let seconds = parseInt(secondsInput.value, 10);
+
+        if (seconds > 0) {
+            seconds--;
+        } else if (minutes > 0) {
+            minutes--;
+            seconds = 59;
+        } else if (hours > 0) {
+            hours--;
+            minutes = 59;
+            seconds = 59;
+        }
+
+        hoursInput.value = hours;
+        minutesInput.value = minutes;
+        secondsInput.value = seconds;
+
+        if (isTimeZero()) {
+            clearInterval(timerInterval);
+            updateButtonToStart();
+        }
+    }
+
+    function startTimer() {
+        if (timerInterval === null) {
+            timerInterval = setInterval(decrementTime, 1000);
+            updateButtonToPause();
+        } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            updateButtonToStart();
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        hoursInput.value = 0;
+        minutesInput.value = 0;
+        secondsInput.value = 0;
+        updateButtonToStart();
+    }
+
+    startButton.addEventListener('click', startTimer);
+    resetButton.addEventListener('click', resetTimer);
+    </script>
+</body>
+</html>
